@@ -1,5 +1,6 @@
 package art.backendservice.entity;
 
+import art.userservice.entity.Tutors;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,5 @@ public class Courses {
     @NotNull
     private Subjects subjects;
 
+    private String tutorsId;
 }
