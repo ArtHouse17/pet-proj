@@ -1,0 +1,14 @@
+<configuration>
+    <appender name="MAIL_SERVICE" class="ch.qos.logback.core.FileAppender">
+        <file>mylog/mail-service.log</file> <!-- Путь к файлу логов внутри проекта -->
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="MAIL_SERVICE" />
+    </root>
+
+</configuration>

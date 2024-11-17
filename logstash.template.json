@@ -21,5 +21,14 @@
         "type": "date"
       }
     }
+  },
+  "customizations": {
+    "jetbrains": {
+      "settings": {
+        "com.intellij:app:HttpConfigurable.use_proxy_pac": true,
+        "Docker:app:DockerSettings.dockerComposePath": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe",
+        "Docker:app:DockerSettings.dockerPath": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"
+      }
+    }
   }
 }
