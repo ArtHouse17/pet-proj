@@ -122,6 +122,8 @@ services:
       - pgadmin-data:/var/lib/pgadmin
 
   elasticsearch:
+    env_file:
+      - .env
     build:
       context: elasticsearch/
       args:
@@ -135,11 +137,13 @@ services:
     environment:
       node.name: elasticsearch
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      ELASTIC_PASSWORD: changeme
       discovery.type: single-node
     restart: unless-stopped
 
   kibana:
+    env_file:
+      - .env
     build:
       context: kibana/
       args:
@@ -149,12 +153,14 @@ services:
     ports:
       - "5601:5601"
     environment:
-      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: changeme
     depends_on:
       - elasticsearch
     restart: unless-stopped
 
   logstash:
+    env_file:
+      - .env
     build:
       context: logstash/
       args:
@@ -169,11 +175,28 @@ services:
     environment:
       LOG_LEVEL: debug
       LS_JAVA_OPTS: -Xms256m -Xmx256m
-      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: changeme
     depends_on:
       - elasticsearch
     restart: unless-stopped
 
+  setup:
+    profiles:
+      - setup
+    build:
+      context: setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./setup/lib.sh:/lib.sh:ro,Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    depends_on:
+      - elasticsearch
   grafana:
     build: ./config/grafana
     ports:
