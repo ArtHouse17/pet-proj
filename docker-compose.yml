@@ -1,4 +1,3 @@
-version: '3.9'
 
 services:
   zookeeper:
@@ -123,100 +122,57 @@ services:
       - pgadmin-data:/var/lib/pgadmin
 
   elasticsearch:
-    container_name: elasticsearch
-    image: elasticsearch:7.17.18
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     environment:
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9200:9200
-      - 9300:9300
-    stdin_open: true
-    tty: true
-    network_mode: bridge
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "50"
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    restart: unless-stopped
+
   kibana:
-    container_name: kibana
-    image: kibana:7.17.18
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    build:
+      context: kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
-      - 5601:5601
-    links:
-      - elasticsearch:elasticsearch
+      - "5601:5601"
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     depends_on:
       - elasticsearch
-    stdin_open: true
-    tty: true
-    network_mode: bridge
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "50"
+    restart: unless-stopped
+
   logstash:
+    build:
+      context: logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
     container_name: logstash
-    image: logstash:7.17.18
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./logstash.template.json:/usr/share/logstash/templates/logstash.template.json
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline/
     ports:
-      - 5044:5044
-    links:
-      - elasticsearch:elasticsearch
+      - "9600:9600"
+      - "50000:50000/tcp"
+    environment:
+      LOG_LEVEL: debug
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
     depends_on:
       - elasticsearch
-    stdin_open: true
-    tty: true
-    network_mode: bridge
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "50"
-  filebeat:
-    user: root
-    container_name: filebeat
-    image: elastic/filebeat:7.17.25
-    links:
-      - logstash:logstash
-    depends_on:
-      - logstash
-    volumes:
-      - /var/run/docker.sock:/host_docker/docker.sock
-      - /var/lib/docker:/host_docker/var/lib/docker
-      - ./mylog:/usr/share/filebeat/mylog
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
-    command: ["--strict.perms=false"]
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    stdin_open: true
-    tty: true
-    network_mode: bridge
-    deploy:
-      mode: global
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "50"
+    restart: unless-stopped
 
   grafana:
     build: ./config/grafana
@@ -266,4 +222,5 @@ volumes:
     driver: local
   grafana-data:
     driver: local
+  elasticsearch:
 

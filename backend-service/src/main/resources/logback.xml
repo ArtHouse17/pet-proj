@@ -1,15 +1,17 @@
-<configuration>
-    <appender name="BACKEND_SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>mylog/backend-service.log</file> <!-- Путь к файлу логов внутри проекта -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>mylog/backend.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+<configuration  scan="true" scanPeriod="60 seconds" debug="false">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+        </encoder>
     </appender>
-
-    <root level="INFO">
-        <appender-ref ref="BACKEND_SERVICE" />
+    <appender name="LOGSTASH"
+              class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:50000</destination>
+        <encoder charset="UTF-8"
+                 class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </root>
-
 </configuration>
