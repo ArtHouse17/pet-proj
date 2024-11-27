@@ -1,16 +1,17 @@
-<configuration>
-    <appender name="USER_SERVICE" class="ch.qos.logback.core.FileAppender">
-        <file>mylog/user-service.log</file> <!-- Путь к файлу логов внутри проекта -->
-        <append>true</append>
+<configuration  scan="true" scanPeriod="60 seconds" debug="false">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %level - %msg%n</pattern>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
-
-    <root level="INFO">
-        <appender-ref ref="USER_SERVICE" />
+    <appender name="LOGSTASH"
+              class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:50000</destination>
+        <encoder charset="UTF-8"
+                 class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGSTASH"/>
     </root>
-
-
-
 </configuration>
