@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1732821956889-6" author="root">
+        <createSequence incrementBy="50" sequenceName="students_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1732821956889-7" author="root">
+        <createSequence incrementBy="50" sequenceName="tutors_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1732821956889-8" author="root">
+        <createTable tableName="students">
+            <column name="students_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_students"/>
+            </column>
+            <column name="date_of_registration" type="DATETIME"/>
+            <column name="date_of_latest_login" type="DATETIME"/>
+            <column name="login" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1732821956889-9" author="root">
+        <createTable tableName="tutors">
+            <column name="tutors_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tutors"/>
+            </column>
+            <column name="login" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1732821956889-1" author="root">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="data" tableName="subjects" validate="true"/>
+    </changeSet>
+    <changeSet id="1732821956889-2" author="root">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="description" tableName="courses"
+                              validate="true"/>
+    </changeSet>
+    <changeSet id="1732821956889-3" author="root">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="name" tableName="courses" validate="true"/>
+    </changeSet>
+    <changeSet id="1732821956889-4" author="root">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="name" tableName="subjects" validate="true"/>
+    </changeSet>
+    <changeSet id="1732821956889-5" author="root">
+        <addNotNullConstraint columnDataType="INT" columnName="subjects_id" tableName="courses" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

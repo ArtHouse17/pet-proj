@@ -1,6 +1,7 @@
 package art.backendservice.controller;
 
 import art.backendservice.kafka.KafkaProducer;
+import art.backendservice.repository.CoursesRepository;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,9 +13,10 @@ public class Controller {
 
     private final KafkaProducer kafkaProducer;
 
-
-    public Controller(KafkaProducer kafkaProducer) {
+    private final CoursesRepository coursesRepository;
+    public Controller(KafkaProducer kafkaProducer, CoursesRepository coursesRepository) {
         this.kafkaProducer = kafkaProducer;
+        this.coursesRepository = coursesRepository;
     }
 
     @PostMapping("kafka/send")
