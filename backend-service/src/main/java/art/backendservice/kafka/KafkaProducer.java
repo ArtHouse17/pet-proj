@@ -14,7 +14,7 @@ public class KafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(int message) {
+    public void sendMessage(String message) {
         kafkaTemplate.send("art.backendservice", String.valueOf(message));
 
     }

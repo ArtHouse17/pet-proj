@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Tutors {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tutors_id")
     private int id;
 
